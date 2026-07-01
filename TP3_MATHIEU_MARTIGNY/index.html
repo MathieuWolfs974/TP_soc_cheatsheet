@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infratech-Guest — Portail Wi-Fi Invités</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <main class="portal">
+
+        <!-- ============================================================= -->
+        <!-- COLONNE ILLUSTRATION (gauche) — masquée sur mobile            -->
+        <!-- Consignes de sécurité physique du Data Center                -->
+        <!-- ============================================================= -->
+        <section class="aside">
+            <div class="aside__inner">
+
+                <div class="brand">
+                    <svg class="brand__logo" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                    <span class="brand__name">Infratech</span>
+                </div>
+
+                <h2 class="aside__title">Sécurité du Data Center</h2>
+                <p class="aside__lead">
+                    Avant d'accéder au réseau, prenez connaissance des règles
+                    en vigueur sur nos sites hébergeant des infrastructures sensibles.
+                </p>
+
+                <ul class="rules">
+                    <li class="rule">
+                        <svg class="rule__icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="4" y="3" width="16" height="18" rx="2"/>
+                            <circle cx="12" cy="10" r="2.4"/>
+                            <path d="M8 16.5c0-2.2 8-2.2 8 0"/>
+                        </svg>
+                        <span>Badge d'accès visible et porté en permanence.</span>
+                    </li>
+                    <li class="rule">
+                        <svg class="rule__icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="9" cy="8" r="3"/>
+                            <path d="M3.5 20c0-3 2.7-4.7 5.5-4.7"/>
+                            <circle cx="17" cy="9" r="2.4"/>
+                            <path d="M14.5 15.4c3 0 6 1.4 6 4.6"/>
+                        </svg>
+                        <span>Une personne = un badge. Pas de talonnage aux portes.</span>
+                    </li>
+                    <li class="rule">
+                        <svg class="rule__icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 8h3l1.5-2h5L15 8h3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+                            <circle cx="11" cy="13" r="3"/>
+                            <line x1="3" y1="3" x2="21" y2="21"/>
+                        </svg>
+                        <span>Photos, captures et enregistrements strictement interdits.</span>
+                    </li>
+                    <li class="rule">
+                        <svg class="rule__icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="5" y="10.5" width="14" height="9.5" rx="2"/>
+                            <path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/>
+                        </svg>
+                        <span>Verrouillez toujours votre session en quittant un poste.</span>
+                    </li>
+                </ul>
+
+                <p class="aside__foot">Charte informatique — Infratech SAS · Réseau invités</p>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- COLONNE FORMULAIRE (droite) — toujours visible               -->
+        <!-- ============================================================= -->
+        <section class="login">
+            <div class="login__inner">
+
+                <div class="brand brand--light">
+                    <svg class="brand__logo" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                    <span class="brand__name">Infratech-Guest</span>
+                </div>
+
+                <h1 class="login__title">Portail Wi-Fi Invités</h1>
+                <p class="login__sub">Identifiez-vous pour accéder à Internet.</p>
+
+                <form class="auth" action="#" method="post">
+                    <label class="field">
+                        <span class="field__label">Identifiant</span>
+                        <input type="text" name="identifiant" autocomplete="username"
+                               placeholder="prenom.nom" required>
+                    </label>
+
+                    <label class="field">
+                        <span class="field__label">Code d'accès temporaire</span>
+                        <input type="password" name="code" autocomplete="one-time-code"
+                               placeholder="••••••••" required>
+                        <span class="field__hint">Code fourni à l'accueil, valable 24 h.</span>
+                    </label>
+
+                    <label class="check">
+                        <input type="checkbox" id="charte" name="charte">
+                        <span>J'ai lu et j'accepte la <a href="#">charte informatique</a>.</span>
+                    </label>
+
+                    <button type="submit" id="connexion" class="btn" disabled>Se connecter</button>
+                </form>
+
+                <p class="auth__success" hidden>
+                    <svg viewBox="0 0 24 24" aria-hidden="true" class="auth__check">
+                        <circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-5"/>
+                    </svg>
+                    Connexion réussie — accès Internet autorisé.
+                </p>
+
+                <p class="login__foot">Besoin d'aide ? Contactez l'accueil ou le support IT.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Petit plus (hors CSS) : la charte doit être acceptée pour activer le bouton.
+        const chk  = document.getElementById('charte');
+        const btn  = document.getElementById('connexion');
+        const form = document.querySelector('.auth');
+        const ok   = document.querySelector('.auth__success');
+
+        function sync() { btn.disabled = !chk.checked; }
+        chk.addEventListener('change', sync);
+        sync();
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!chk.checked) return;
+            form.hidden = true;
+            ok.hidden = false;
+        });
+    </script>
+
+</body>
+</html>

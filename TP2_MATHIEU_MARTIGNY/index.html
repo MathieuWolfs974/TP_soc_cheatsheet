@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOC Security Events — Console SecOps</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- ÉTAPE 1.1 — Header (Flexbox à l'étape 2.3) -->
+    <header class="topbar">
+        <h1 class="topbar__title">SOC Security Events</h1>
+        <ul class="kpi">
+            <li class="kpi__item">
+                <span class="kpi__value" id="eps">1 284</span>
+                <span class="kpi__label">EPS (évts/s)</span>
+            </li>
+            <li class="kpi__item">
+                <span class="kpi__value kpi__value--ok">● ONLINE</span>
+                <span class="kpi__label">Base de données</span>
+            </li>
+        </ul>
+    </header>
+
+    <!-- Bandeau de synthèse : cartes KPI + graphe CSS (recalculés en direct) -->
+    <section class="summary" aria-label="Synthèse des événements">
+        <div class="stat">
+            <span class="stat__value" id="stat-total">0</span>
+            <span class="stat__label">Événements</span>
+        </div>
+        <div class="stat">
+            <span class="stat__value" id="stat-blocked">0</span>
+            <span class="stat__label">Bloqués</span>
+        </div>
+        <div class="stat stat--alert">
+            <span class="stat__value" id="stat-crit">0</span>
+            <span class="stat__label">Critiques</span>
+        </div>
+        <div class="stat">
+            <span class="stat__value stat__value--ip" id="stat-topip">—</span>
+            <span class="stat__label">IP la plus active</span>
+        </div>
+        <div class="stat stat--chart">
+            <span class="stat__label">Répartition par criticité</span>
+            <div class="chart" id="chart"></div>
+        </div>
+    </section>
+
+    <main class="grid">
+
+        <!-- ÉTAPE 1.2 — Formulaire de filtrage (filtres avancés) -->
+        <aside class="panel filters">
+            <h2 class="panel__title">Filtres de recherche</h2>
+            <form class="filters__form" action="#" method="get">
+                <label class="field">
+                    <span class="field__label">IP source</span>
+                    <input type="text" name="ip" placeholder="Ex : 185.220.101.5" aria-label="Filtrer par IP source">
+                </label>
+                <label class="field">
+                    <span class="field__label">Niveau de criticité</span>
+                    <select name="criticite">
+                        <option value="">Toutes criticités</option>
+                        <option value="critique">Critique</option>
+                        <option value="warning">Warning</option>
+                        <option value="info">Info</option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span class="field__label">Action pare-feu</span>
+                    <select name="action">
+                        <option value="">Toutes actions</option>
+                        <option value="Bloqué">Bloqué</option>
+                        <option value="Autorisé">Autorisé</option>
+                    </select>
+                </label>
+                <label class="field">
+                    <span class="field__label">Type d'attaque</span>
+                    <select name="type">
+                        <option value="">Tous types</option>
+                    </select>
+                </label>
+                <input type="submit" value="Appliquer les filtres" class="btn">
+                <button type="button" class="btn btn--ghost filters__reset">Réinitialiser</button>
+            </form>
+        </aside>
+
+        <!-- ÉTAPE 1.3 — Tableau des événements SIEM -->
+        <section class="panel events">
+            <div class="events__head">
+                <h2 class="panel__title">Flux d'événements en temps réel</h2>
+                <div class="events__controls">
+                    <span class="events__count" id="count" aria-live="polite">4 événements</span>
+                    <button type="button" id="toggleLive" class="btn btn--ghost btn--sm" aria-pressed="true">⏸ Pause</button>
+                </div>
+            </div>
+
+            <div class="events__scroll">
+                <table class="events__table">
+                    <caption class="sr-only">Journal des événements de sécurité, triable et filtrable</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col"><button type="button" class="th-sort" data-key="time">Horodatage <span class="th-sort__ind"></span></button></th>
+                            <th scope="col"><button type="button" class="th-sort" data-key="id">ID Événement <span class="th-sort__ind"></span></button></th>
+                            <th scope="col"><button type="button" class="th-sort" data-key="ip">IP Source <span class="th-sort__ind"></span></button></th>
+                            <th scope="col"><button type="button" class="th-sort" data-key="type">Type d'Attaque <span class="th-sort__ind"></span></button></th>
+                            <th scope="col"><button type="button" class="th-sort" data-key="action">Action Pare-feu <span class="th-sort__ind"></span></button></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Lignes d'amorçage (Étape 1.3). Le script les lit puis gère le tableau. -->
+                        <tr data-criticite="critique">
+                            <td data-label="Horodatage">06:12:04</td>
+                            <td data-label="ID Événement">EVT-942</td>
+                            <td data-label="IP Source">185.220.101.5</td>
+                            <td data-label="Type d'Attaque">Brute Force SSH</td>
+                            <td data-label="Action Pare-feu"><span class="tag tag--blocked">Bloqué</span></td>
+                        </tr>
+                        <tr data-criticite="warning">
+                            <td data-label="Horodatage">06:12:47</td>
+                            <td data-label="ID Événement">EVT-943</td>
+                            <td data-label="IP Source">45.155.205.233</td>
+                            <td data-label="Type d'Attaque">Port Scan (nmap)</td>
+                            <td data-label="Action Pare-feu"><span class="tag tag--blocked">Bloqué</span></td>
+                        </tr>
+                        <tr data-criticite="critique">
+                            <td data-label="Horodatage">06:13:29</td>
+                            <td data-label="ID Événement">EVT-944</td>
+                            <td data-label="IP Source">92.63.197.48</td>
+                            <td data-label="Type d'Attaque">SQL Injection</td>
+                            <td data-label="Action Pare-feu"><span class="tag tag--blocked">Bloqué</span></td>
+                        </tr>
+                        <tr data-criticite="info">
+                            <td data-label="Horodatage">06:14:10</td>
+                            <td data-label="ID Événement">EVT-945</td>
+                            <td data-label="IP Source">10.42.0.17</td>
+                            <td data-label="Type d'Attaque">Trafic anormal (interne)</td>
+                            <td data-label="Action Pare-feu"><span class="tag tag--allowed">Autorisé</span></td>
+                        </tr>
+                        <tr class="events__empty" style="display:none">
+                            <td colspan="5" data-label="">Aucun événement ne correspond aux filtres.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="statusbar">
+        <span>Conformité SecOps : <strong class="statusbar__ok">CONFORME</strong></span>
+        <span>Dernier scan : 06:14:12 UTC · Moteur SIEM v3.2</span>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
